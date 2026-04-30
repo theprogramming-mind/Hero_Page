@@ -1,23 +1,751 @@
+
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Projects</title>
-    <style>
-        body { font-family: Arial, sans-serif; max-width: 600px; margin: 50px auto; padding: 20px; }
-        h1 { color: #333; }
-        ul { line-height: 2; }
-        a { color: #0066cc; text-decoration: none; font-size: 18px; }
-        a:hover { text-decoration: underline; }
-    </style>
-</head>
-<body>
-    <h1>Welcome to My Projects</h1>
-    <p>Click a project below:</p>
-    <ul>
-        <li><a href="Training_Work.html">Training Work</a></li>
-        <li><a href="hero_registration(mocup).html">Hero Registration</a></li>
-    </ul>
-</body>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+    <title>Hero Registration System(Mockup)</title>
+<!--Link to all the fonts used, are written down below-->
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
+        <style>
+             :root {
+      --bg:       #0a0a0f;
+      --surface:  #12121a;
+      --border:   #2a2a3a;
+      --accent:   rgb(0, 212, 255);
+      --accent2:  #ff3d6b;
+      --gold:     #ffc107;
+      --text:     #e8e8f0;
+      --muted:    #6b6b88;
+      --radius:   10px;
+                    }
+
+            *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; } 
+        body{
+            padding: 40px 16px 80px;
+            font-family: 'Verdana', sans-serif;
+            display:flex;
+            flex-direction: column;
+            background: var(--bg);
+            color:var(--text);
+            align-items: center;
+            min-height: 100vh;
+        }
+        body.light{
+        --bg:      #f0f2f5;
+        --surface: #ffffff;
+        --border:  #d0d4de;
+        --text:    #1a1a2e;
+        --muted:   #5a5a7a;
+        }
+        #theme-toggle{
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                z-index: 999;
+                height: 42px;
+                width: 42px;
+                border-radius: 59%;
+                border: 2px solid var(--border);
+                background: rgba(10,6,14,0.7);
+                color: #fff;
+                font-size: 1.1rem;
+                cursor: pointer;
+                justify-content: center;
+                align-items: center;
+                transition: background 0.5s, transform 0.2s;
+                box-shadow: 0 2px 12px rgba(0,0,0,0.4);
+                backdrop-filter: blur(6px);
+        }
+        
+        body.light #theme-toggle{
+            background:rgba(245,240,230,0.9); ;
+            color: rgba(34, 34, 34, 0.821) ;
+            border-color: rgba(138, 138, 138, 0.5);
+        }
+        
+        #theme-toggle:hover{transform: scale(1.1); border-color: var(--accent);}
+        /*Creating Canvas*/
+        #bg-canvas{
+            top:0;
+            left:0;
+            z-index: 0;
+            position: fixed;
+            width:100%; height:100%;
+            pointer-events: none;
+        }
+
+        .page-wrap{
+            z-index: 1;
+            width:100%;
+            position: relative;
+            max-width: 620px;
+        }
+        .header-badge{
+            display: flex;
+            flex-direction: column;
+            margin-bottom:32px;/*clutter*/
+            align-items: center;
+            gap:10px;/*clutter*/
+        }
+        .header-badge h1{
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: clamp(2.0rem, 8vw, 3.4rem);
+            letter-spacing: 0.08em;
+            color:var(--accent);
+            text-shadow: 0 0 30px rgba(0,212,255,0.4);
+            line-height: 1;
+        }
+        .header-badge p{
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            font-size: 0.85rem; ;
+            color: var(--muted);    
+        }
+        .form-card{
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            background: var(--surface);
+            padding: 36px 32px;
+            position: relative;
+            overflow: hidden;
+        }
+         .card-deco {
+      position: absolute;
+      top: -40px;
+      right: -40px;
+      opacity: 0.06;
+      pointer-events: none;
+    }
+        fieldset{
+            margin-bottom:24px;
+            border: 1px solid var(--border);
+            padding:20px ;
+            border-radius:var(--radius) ;
+        }
+        legend{
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1rem ;
+            letter-spacing: 0.1em;
+            color:var(--accent);
+            padding:0 10px;
+        }
+        legend::before{
+            content: "";
+            width: 8px; 
+            height: 8px;
+            display: inline-block;
+            background: var(--accent2);
+            border-radius:50% ;
+            margin-right:8px ;
+            vertical-align: middle;
+        }
+        label{
+            display: block;
+            margin-top: 14px;
+            margin-bottom: 6px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--muted)
+        }
+        label:first-child{margin-top : 0;}
+
+        input[type="text"],
+        input[type="email"],
+        input[type="tel"],
+        input[type="password"],
+        input[type="number"],
+        input[type="url"],
+        input[type="date"],
+        input[type="time"],
+        input[type="search"],
+        select,
+        textarea{
+            width: 100%;
+            font-family: 'DM sans', sans-serif;
+            font-size: 0.9rem;
+            outline: none;
+            padding: 10px 14px ;
+            background:var(--bg);
+            color: var(--text);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            transition: border-color 0.25s, box-shadow 0.25s;
+        }
+        input:focus, select:focus, textarea:focus{
+            border-color: var(--accent);
+            box-shadow:0 0 0 3px rgba(0, 212, 255, 0.12);
+        }
+        .range-wrap{
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        input[type="range"]{
+            -webkit-appearance: none;
+            border-radius: 999px;
+            flex: 1;
+            cursor: pointer;
+            height: 5px;
+            border:none;
+            background: var(--border);
+        }
+        input[type="range"]::-webkit-slider-thumb{
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            box-shadow: 0 0 0 8px rgba(0, 212, 255, 0.5);
+            background: var(--accent);
+       }
+       output{
+        font-family: 'Bebas Neue', sans-serif;
+        font-size: 1.4rem ;
+        color:var(--accent);
+        min-width: 28px;
+        text-align: right;
+       }
+       input[type="color"]{
+        -webkit-appearance: none;
+        width:44px;
+        height:44px;
+        padding:2px;
+        border:2px solid var(--border);
+        border-radius: 8px; 
+        background: transparent;
+        cursor: pointer;
+       }
+        input[type="color"]::-webkit-color-swatch-wrapper{padding:0; }   
+          
+       input[type="color"]::-webkit-color-swatch{border-radius: 6px; border:none;}
+
+       #color-preview{
+        font-family: 'Bebas Neue', sans-serif;
+        font-size: 1.1rem;
+        letter-spacing: 0.1em;
+        transition: color 0.5s;
+        color:var(--muted);
+       }
+       .check-group, .radio-group{
+        display:flex;
+        flex-wrap: wrap;
+        gap:10px;
+        margin-top: 6px;
+       }
+       .check-group label, .radio-group label{
+        display: flex;
+        font-size: 0.85rem;
+        cursor:pointer;
+        margin:0 ;
+        text-transform: none;
+        color: var(--muted);
+        gap: 7px;
+        align-items: center;
+       }
+       input[type="checkbox"],
+       input[type="radio"]{
+        width: 16px;
+        height: 16px; 
+        accent-color: var(--accent);
+        cursor: pointer;
+       }
+       input[type="file"]{
+        border: 1px dashed var(--border);
+        color: var(--muted);
+        background: var(--bg);
+        border-radius: var(--radius);
+        padding: 12px;
+        cursor: pointer;
+        width:100%;
+       }
+        input[type="file"]:hover{
+        background: var(--accent);
+        }
+        progress{
+            -webkit-appearance: none;
+            appearance: none;
+            border: none;
+            width: 100%;
+            height: 12px;
+         
+            overflow: hidden;
+            background: var(--surface);
+        }
+        progress::-webkit-progress-bar{
+            background: var(--surface);
+            border-radius: 20px;
+        }
+        progress::-webkit-progress-value{
+            background:linear-gradient(90deg, var(--accent), var(--accent2));
+            border-radius: 20px;
+            transition: 0.4s ease;
+        }
+        progress::-moz-progress-bar{
+            background:linear-gradient(90deg, var(--accent), var(--accent2));
+            border-radius: 20px;
+        }
+        #power-label{
+            font-size: 0.78em;
+            margin-top: 4px;
+            color: var(--muted);
+            display: block;
+        }
+        meter{
+            width: 100%;
+            height: 8px;
+        }
+        details{
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 14px 18px;
+            margin-bottom: 24px;
+        }
+        details[open]{border-color: var(--accent);}
+        summary{
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1rem;
+            letter-spacing: 0.1em;
+            color: var(--accent);
+            cursor: pointer;
+            list-style: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        summary::after{
+            content: "▶";
+            font-size: 0.7rem;
+            transition: transform 0.3s;
+        }
+        details[open] summary::after{transform: rotate(90deg); }
+        .details-body{margin-top: 16px;}
+
+        .grid-2{
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+
+        @media(max-width: 480px){.grid-2 {grid-template-columns: 1fr;}}
+
+        .btn-submit{
+            width:100%;
+            background:linear-gradient(135deg, var(--accent), #007bff);
+            color:white; 
+            padding:14px;
+            border-radius:var(--radius) ;
+            border: none;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition:opacity 0.2s, transform 0.5s ;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: large;
+            letter-spacing: 0.15em;
+        }
+        #svg-hero-wrap{
+            display: flex;
+            justify-content: center;
+            margin-bottom: 24px;
+        }
+        .canvas-wrap{
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+            margin-top: 8px;
+        }
+        #quirk-canvas{
+            display: block;
+            height: 60px;
+            width: 100%;
+        }
+      
+        #toast{
+            left: 50%;
+            bottom:30px;
+            background: var(--accent);
+            color: white;
+            padding: 12px 28px;
+            transform: translateX(-50%) translateY(80px);
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1rem;
+            letter-spacing: 0.1em;
+            border-radius: 999px;
+            position: fixed;
+            pointer-events: none;
+            z-index: 100;
+            transition: opacity 0.4s, transform 0.4s;
+            opacity: 0;
+        }
+        #toast.show{
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+   /*     @keyframes slideIn{
+            from{opacity:0; transform: translateX(100%)}
+            to{opacity:1; transform: translateX(0)}
+        }*/
+
+        </style>
+    </head>
+    <body>
+        <button id ="theme-toggle" title="Toggle light/dark mode">☀️</button>
+        <canvas id="bg-canvas"></canvas>
+        <div class="page-wrap">
+        <div class="header-badge">
+        <svg height="80" width="80" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg" aria-label="UA-Hero Shield">
+                <defs>
+                    <linearGradient id="shield-grad" x1="0%" y1="0%" x2="100%" y2="100%" >
+                        <stop offset="0%" stop-color="#00d4ff">
+                        <stop offset="100%" stop-color="#ff3d6b">
+                    </linearGradient>
+                    
+                    <filter id="glow">
+                        <feGaussianBlur stdDeviation="3" result="blur"/>
+                        <feMerge>
+                            <feMergeNode in="blur"/>
+                            <feMergeNode in="SourceGraphic"/>
+                        </feMerge>
+                    </filter>
+                </defs>
+                <polygon
+                    points="40,4 72,20 72,52 40,76 8,52 8,20"
+                    fill="none"
+                    stroke="url(#shield-grad)"
+                    stroke-width="3"
+                    filter="url(#glow)"
+                />
+            <circle cx="40" cy="40" r="14" fill="url(#shield-grad)" opacity="0.4"/>
+
+            <text 
+            x="40" y="45"
+            text-anchor="middle"
+            font-family="'Bebas Neue', sans-serif"
+            font-size="16"
+            fill="#00d4ff"
+            filter="url(#glow)"
+            >U.A</text>
+            <rect x="34" y="6" width="12" height="6" rx="2" fill="url(#shield-grad)"/>
+        </svg>
+
+        <h1 >HERO REGISTRATION</h1>
+        <p>UA High 🌟 Quirk Enrollment System </p>
+        </div>
+        <div class="form-card">
+            <svg class="card-deco" width="300" height="300" 
+        viewBox="0 0 200 200" 
+        xmlns="http://www.w3.org/2000/svg" 
+        aria-hidden="true">
+        <path fill="#00d4ff" d="M43,-75C55.7,-67,65.5,-55.4,74.2,-42.2C82.9,-29,90.4,-14.5,90.7,0.2C91,14.9,84,29.7,74.7,42.4C65.3,55.1,53.6,65.7,40.4,72.9C27.3,80.1,12.6,83.9,-2.4,87.7C-17.4,91.6,-34.8,95.4,-47.7,88.7C-60.6,82,-69,64.9,-75.4,48C-81.8,31.1,-86.1,14.4,-84.6,-1.5C-83.1,-17.5,-75.7,-32.6,-66.2,-45.8C-56.7,-59,-45.1,-70.3,-31.9,-77.5C-18.6,-84.6,-3.8,-87.5,10.1,-86.3C24,-85,30.4,-83,43,-75Z" transform="translate(100 100)"/>
+        </svg>
+        <form id="hero-form" action="/submit" method="POST" enctype="multipart/form-data">
+            <fieldset>
+                <legend>Identity</legend>
+                <label for="hero-name">Hero Name</label>
+                <input type="text" id="hero-name" name="hero-name"
+                placeholder="e.g Deku, Kaminari, shoto"
+                required minlength="2" maxlength="30"
+                autocomplete="nickname">
+
+                <label for="real-name">Your Name</label>
+                <input type="text" id="real-name" name="real-name"
+                placeholder="Your actual name (if you want :)"
+                autocomplete="name">
+
+                <label for="email"> Email address </label>
+                <input type="email" id="email" name="email"
+                placeholder="hero@ua.ac.ng"
+                autocomplete="email">
+
+                <label for="phone">Phone number</label>
+                <input type="tel" id="phone" name="phone"
+                  pattern="[\+]?[0-9\-\s]{7,15}">
+                
+                <label for="password">Password </label>
+                <input type="password" id="password" name="password"
+                minlength="8" autocomplete="new-password">
+
+                <label for="dob">Date of Birth</label>
+                <input type="date" id="dob" name="dob"
+                min="1995-01-01" max="2010-12-31">
+            </fieldset>
+            <fieldset>
+                <legend>Quirk Details </legend>
+
+                <label for="quirk-type">Quirk Types</label>
+                <input type="text" id="quirk-type" name="quirk-type"
+                list="quirk-options" placeholder="Any quirk type">
+                <datalist id="quirk-options">
+                <option value="Emitter">
+                <option value="Transformation">
+                <option value="Mutant">
+                <option value="One For All">
+                </datalist>
+
+                <label for="quirk-search">Search for a quirk</label>
+                <input type="search" id="quirk-search" name="quirk-search"
+                placeholder="search by hero name">
+
+                <div class="grid-2">
+                    <div>
+                        <label for="power-level">Power Level</label>
+                        <input type="number" id="power-level" name="power-level"
+                        min="1" max="100" step="1" value="45" 
+                        oninput="updatePower(this.value)"><!--A qurik level cannot be 0, that means no quirk-->
+                    </div>
+                    <div>
+                    <label for="ranks">Official Hero Rankings</label>
+                    <select id="rank" name="rank" required>
+                        <option value="" disabled selected>Pick a rank...</option>
+                        <optgroup label="Student">
+                            <option value="1a">Class-1a</option>
+                            <option value="1b">Class-1b</option>
+                        </optgroup>
+                        <optgroup label="Pro-Hero">
+                            <option value="Top10">Top-10 </option>
+                            <option value="pro">Licensed Pro</option>
+                        </optgroup>
+                    </select>
+                    </div>
+                </div>
+                <progress id="power-bar" value="45" max="100"></progress>
+                <label for="speed">Mobility Score (1-100)</label>
+
+                <div class="range-wrap">
+                <input type="range" id="speed" name="speed"
+                    min="0" max="100" value="50" step="5"
+                    oninput="speedOut.value=this.value">
+                <output name="speedOut" for="speed">60</output>
+                </div>
+
+                <label for="endurance">Endurance Rating</label>
+                <meter id="endurance" min="0" max="10" low="3" high="7" optimum="9" value="7"></meter>
+                <span style="font-size:0.75rem; color:var(--muted)">
+                    meter element- low=3(red) high=7(yellow) optimum=9(green)
+                </span>
+                <label>Qurik Visualizer (Canvas)</label>
+
+                <div class="canvas-wrap">
+                <canvas id="quirk-canvas"></canvas>
+                </div>
+
+                <label for="quirk-desc">Quirk Description</label>
+                <textarea name="quirk-desc" id="quirk-desc" 
+                minlength="3" maxlength="300" 
+                placeholder="Describe your favorable quirk"></textarea>
+            </fieldset>
+            <fieldset>
+                <legend>Hero Preferences</legend>
+                <label>Preferred Combat Style(Pick all that apply)</label>
+
+                <div class="check-group">
+                    <label><input type="checkbox" name="style" value="Close">Close Range</label>
+                    <label><input type="checkbox" name="style" value="Ranged">Ranged </label>
+                    <label><input type="checkbox" name="style" value="Support">Support </label>
+                    <label><input type="checkbox" name="style" value="Stealth">Stealth </label>
+                </div>
+
+                <div class="radio-group">
+                    <label><input type="radio" name="season" value="Summer">Summer</label>
+                    <label><input type="radio" name="season" value="Winter">Winter</label>
+                    <label><input type="radio" name="season" value="Autumn">Autumn</label>
+                     <label><input type="radio" name="season" value="Spring">spring</label>
+                </div>
+            </fieldset>
+                <details>
+                    <summary>Advanced Settings</summary>
+
+                    <div class="details-body">
+                        <input type="hidden" id="form_id" value="ua-hero-reg-v2">
+                        <input type="hidden" id="source" value="hero-registraion-system">
+
+                        <label for="pic_upload">Upload your hero picture here</label>
+                        <!--The input for the image insertion-->
+                        <input type="file" id="hero_pic" name="avatar"
+                        accept="image/*" multiple>
+                    
+                        <div class="grid-2" style="margin-top: 14px;">
+                            <label for="hero-color">Hero Color</label>
+                            <div class="color-row" >
+                                <input type="color" id="hero-color" name="hero-color"
+                                 value="#00d4ff" oninput="document.getElementById('color-preview').textContent= this.value; 
+                                 document.getElementById('color-preview').style.color=this.value;">
+                                 <span id="color-preview">#00d4ff</span>
+                            </div>
+                        </div>
+                        <div>
+                            <label for="available_time">Available from:</label>
+
+                            <input type="time" id="avail-time" name="avail-time"
+                            min="5:30" max="22:00" value="10:00">
+                        </div>
+
+                        <label for="hero-fansite">Hero Webisite</label>
+
+                        <input type="url" id="hero-url" name="hero-url"
+                        placeholder="https://myqurik.com">
+                    </div>
+                </details>
+
+                <div class="grid-2" style="margin-bottom: 14px;">
+
+                    <button type="reset"
+                        style="padding: 12px; background:transparent; border:1px solid var(--border); border-radius:var(--radius); color:var(--muted); font-family:'DM Sans',sans-serif; cursor:pointer;">
+                    Reset Form
+                    </button>
+                    <button type="button"
+                     style="padding:12px; background:transparent; border:1px solid var(--accent2); border-radius:var(--radius); color:var(--accent2); font-family:'DM Sans',sans-serif; cursor:pointer;"
+                     onclick="saveDraft()">
+                    Save As Draft
+                    </button>
+                </div>
+                <button type="submit" class="btn-submit">
+                    ⚡ Enroll into this fine institution
+                </button>
+            </form>
+        </div>
+        </div>
+        <div id="toast">😎 Submitted!</div>
+
+        <script>
+            const toggleBtn = document.getElementById('theme-toggle');
+
+            function applyTheme(){
+                const themeSave = localStorage.getItem('theme');
+
+                if (themeSave === 'light'){
+                    document.body.classList.add('light');
+                    textContent = '☀️';
+                }
+                else{
+                    document.body.classList.remove('light');
+                    textContent = '🌑';
+                }
+                
+                toggleBtn.addEventListener('click', () => {
+                    const isLight = document.body.classList.toggle('light');
+                    // toggle() adds the class if missing, removes it if present
+                    // and returns true if it was added, false if removed
+                    toggleBtn.textContent = isLight ? '☀️' : '🌑';
+                    localStorage.setItem('theme', isLight ? 'light' : 'dark');
+                });
+
+            }
+            applyTheme();
+            
+        const bgCanvas = document.getElementById('bg-canvas');
+        const bgCtx = bgCanvas.getContext('2d');
+        
+        function resizeBg(){
+            bgCanvas.height = window.innerHeight;
+            bgCanvas.width = window.innerWidth;
+        }
+        resizeBg();
+        window.addEventListener('resize', resizeBg);
+
+        const orbs = Array.from({length: 18}, () => ({
+            x : Math.random() * window.innerWidth,
+            y: Math.random() * window.innerHeight,
+            r: Math.random() * 120 + 40,
+
+            dx: (Math.random()-0.5) * 0.4,
+            dy: (Math.random()-0.5) * 0.4,
+            
+            hue: Math.random() < 0.5 ? 195:340,
+        }));
+
+       
+        function drawBg() {
+        // clearRect wipes the canvas — like erasing the board before redrawing
+        bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
+
+        orbs.forEach(o => {
+            // createRadialGradient(x0,y0,r0, x1,y1,r1): inner circle → outer circle
+            const g = bgCtx.createRadialGradient(o.x, o.y, 0, o.x, o.y, o.r);
+            g.addColorStop(0,   `hsla(${o.hue}, 100%, 65%, 0.07)`);
+            g.addColorStop(1,   `hsla(${o.hue}, 100%, 65%, 0)`);
+
+            bgCtx.beginPath();               // start a new path
+            bgCtx.arc(o.x, o.y, o.r, 0, Math.PI * 2); // draw circle
+            bgCtx.fillStyle = g;
+            bgCtx.fill();                    // paint it
+
+            // Move the orb
+            o.x += o.dx;
+            o.y += o.dy;
+
+            // Bounce off edges
+            if (o.x < -o.r) o.x = bgCanvas.width + o.r;
+            if (o.x > bgCanvas.width + o.r) o.x = -o.r;
+            if (o.y < -o.r) o.y = bgCanvas.height + o.r;
+            if (o.y > bgCanvas.height + o.r) o.y = -o.r;
+        });
+
+        requestAnimationFrame(drawBg);
+        }
+        drawBg();
+
+            const qCanvas = document.getElementById('quirk-canvas');
+            const qCtx = qCanvas.getContext('2d');
+
+            qCanvas.width = qCanvas.offsetWidth || 400;
+            qCanvas.height = 60;
+
+                    let phase = 0;
+                function drawWave(){
+                    qCtx.clearRect(0, 0, qCanvas.width, qCanvas.height);
+                            [
+                    { color: 'rgba(0,212,255,0.7)', amp: 12, freq: 0.04, offset: 0   },
+                    { color: 'rgba(255,61,107,0.4)', amp: 8,  freq: 0.06, offset: 1.5 }
+                ].forEach(w => {
+                qCtx.beginPath();
+                    for (let x = 0; x <= qCanvas.width; x++) {
+                const y = 30 + Math.sin(x * w.freq + phase + w.offset) * w.amp;
+                x === 0 ? qCtx.moveTo(x, y) : qCtx.lineTo(x, y);
+                }
+                qCtx.strokeStyle = w.color;
+                qCtx.lineWidth   = 2;
+                qCtx.stroke();
+                });
+                phase += 0.05; //that way the wave appaers to be moving in an amazing way
+                requestAnimationFrame(drawWave);
+                }
+                drawWave();
+
+                function updatePower(val){
+                    document.getElementById('power-bar').value = val;
+                    document.getElementById('power-label').textContent = `${val}/100`;
+                }
+
+                function saveDraft(){
+                    showToast('Draft saved Locally!, come back next time');
+                }
+                function showToast(msg){
+                    const t = document.getElementById('toast');
+                    t.textContent = msg;
+                    t.classList.add('show');
+                    setTimeout(() => t.classList.remove('show'), 3000);
+                }
+
+                document.getElementById('hero-form').addEventListener('submit', function(e){
+                    e.preventDefault();
+
+                    const heroName = document.getElementById('hero-name').value.trim() || 'Hero'
+                    const realName = document.getElementById('real-name').value.trim() || ""
+                    const rankings = document.getElementById('rank').value || ""
+
+                    sessionStorage.setItem('heroName', heroName)
+                    sessionStorage.setItem('realName', realName)
+                    sessionStorage.setItem('rank', rankings)
+
+                    showToast('⚡ Hero Added Sucessfully, Redirecting... ⚡');
+                    setTimeout(() => {
+                        window.location.href = 'Training_Work.html';
+                    }, 1200);
+                });
+        </script>
+    </body>
 </html>
